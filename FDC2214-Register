@@ -1,0 +1,71 @@
+void FDC2214_Init(void)
+{
+    SCL_OUT();
+
+    //RCOUNT_CHx conversation time = (CHx_RCOUNT*16 + 4)/fREFx
+    //0x30CB  conversation time = 12491*16 / fREFx = 12491 * 16 / 40 Mhz = 0.004996s
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_RCOUNT_CH0,0xff,0xff);
+
+    //CLOCK_DIVIDERS_CHx BIT9-0 - fREFx = fCLK / CHx_FREF_DIVIDER
+    //BIT12,13  - fINx = fSENSORx / CH0_FIN_SEL
+    //fREFx = fCLK / 1 , fINx = fSENSORx / 2
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_CLOCK_DIVIDERS_CH0,0x20,0x0F);
+
+    //SETTLECOUNT_CHx BIT15-0 - SETTLECOUNT_CHx  tSx = (CHx_SETTLECOUNT*16)/fREFx
+    //0x0019  tSx = 25*16 / fREFx
+    //CHx_SETTLECOUNT > Vpk × fREFx × C × π2 / (32 × IDRIVEX)
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_SETTLECOUNT_CH0,0x00,0x40);
+
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_ERROR_CONFIG,0x00,0x00);
+
+    //MUX_CONFIG BIT15 - 1选择连续模式 BIT14,13 - 00 选择channel 0 和 1
+    //BIT2-0, 选择超出振荡槽的最低频率，100 ，3.3Mhz
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_MUX_CONFIG,0x02,0x0C);
+
+    //DRIVE_CHx 驱动电流 BIT15-11
+    //b01010 0.69mA
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_DRIVE_CH0,0x50,0x00);
+
+    //CONFIG BIT 9 - 0 internal oscillator内部振荡器 1
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_CONFIG,0x16,0x01);
+}
+
+
+void FDC2214_InitCai(void)
+{
+    SCL_OUT();
+
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_DRIVE_RESET_DEV,0x80,0xff);
+
+    //RCOUNT_CHx conversation time = (CHx_RCOUNT*16 + 4)/fREFx
+    //0x30CB  conversation time = 12491*16 / fREFx = 12491 * 16 / 40 Mhz = 0.004996s
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_RCOUNT_CH0,0xff,0xff);
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_RCOUNT_CH1,0xff,0xff);
+
+    //CLOCK_DIVIDERS_CHx BIT9-0 - fREFx = fCLK / CHx_FREF_DIVIDER
+    //BIT12,13  - fINx = fSENSORx / CH0_FIN_SEL
+    //fREFx = fCLK / 1 , fINx = fSENSORx / 2
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_CLOCK_DIVIDERS_CH0,0x20,0x0C);
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_CLOCK_DIVIDERS_CH1,0x20,0x0C);
+
+    //SETTLECOUNT_CHx BIT15-0 - SETTLECOUNT_CHx  tSx = (CHx_SETTLECOUNT*16)/fREFx
+    //0x0019  tSx = 25*16 / fREFx
+    //CHx_SETTLECOUNT > Vpk × fREFx × C × π2 / (32 × IDRIVEX)
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_SETTLECOUNT_CH0,0x00,0x40);
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_SETTLECOUNT_CH1,0x00,0x40);
+
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_ERROR_CONFIG,0x00,0x00);
+
+    //MUX_CONFIG BIT15 - 1选择连续模式 BIT14,13 - 00 选择channel 0 和 1
+    //BIT2-0, 选择超出振荡槽的最低频率，100 ，3.3Mhz
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_MUX_CONFIG,0x82,0x0C);
+
+    //DRIVE_CHx 驱动电流 BIT15-11
+    //b01010 0.69mA
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_DRIVE_CH0,0x50,0x00);
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_DRIVE_CH1,0x50,0x00);
+
+    //CONFIG BIT 9 - 0 internal oscillator内部振荡器 1
+    WordWrite(FDC2214_I2C_ADDR_0,FDC2214_CONFIG,0x16,0x01);
+
+}
